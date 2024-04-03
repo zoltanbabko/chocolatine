@@ -25,8 +25,7 @@ jobs:
 
       - name: Run Coding Style Checker
         run: |
-          docker run --rm -v $(pwd):/workspace ghcr.io/epitech/coding-style-checker:latest
-          ./check.sh $(pwd) $(pwd)
+          docker run --rm -v $(pwd):/workspace ghcr.io/epitech/coding-style-checker:latest ./check.sh $(pwd) $(pwd)
 
   check_program_compilation:
     name: Check Program Compilation
