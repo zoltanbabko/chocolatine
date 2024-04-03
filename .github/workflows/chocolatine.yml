@@ -1,0 +1,79 @@
+name: Chocolatine
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!ga-ignore-*'
+  pull_request:
+    branches:
+      - '*'
+      - '!ga-ignore-*'
+
+env:
+  MIRROR_URL: git@github.com:EpitechPromo2028/B-DOP-200-PAR-2-1-chocolatine-zoltan.babko.git
+  EXECUTABLES: "directory1/executableA,directory2/executableB"
+  GIT_SSH_PRIVATE_KEY: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+
+jobs:
+  check_coding_style:
+    name: Check Coding Style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run Coding Style Checker
+        run: |
+          docker run --rm -v $(pwd):/workspace ghcr.io/epitech/coding-style-checker:latest check.sh $(pwd) $(pwd)
+
+  check_program_compilation:
+    name: Check Program Compilation
+    runs-on: epitechcontent/epitest-docker
+    timeout-minutes: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Make
+        run: make
+        timeout-minutes: 2
+
+      - name: Make Clean
+        run: make clean
+
+      - name: Verify Executables
+        run: |
+          IFS=',' read -ra EXECUTABLES_ARRAY <<< "$EXECUTABLES"
+          for executable in "${EXECUTABLES_ARRAY[@]}"; do
+            if [ ! -x "$executable" ]; then
+              echo "Error: $executable missing or not executable"
+              exit 1
+            fi
+          done
+
+  run_tests:
+    name: Run Tests
+    runs-on: epitechcontent/epitest-docker
+    timeout-minutes: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Make Tests
+        run: make tests_run
+        timeout-minutes: 2
+
+  push_to_mirror:
+    name: Push Mirror Repository
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Push to Mirror
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ env.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
