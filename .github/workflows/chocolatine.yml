@@ -2,12 +2,10 @@ name: Chocolatine
 run-name: ${{github.actor}} checker chocolatine
 on:
   push:
-    branches:
-      - '*'
+    branches-ignore:
       - 'ga-ignore-*'
   pull_request:
-    branches:
-      - '*'
+    branches-ignore:
       - 'ga-ignore-*'
 
 env:
