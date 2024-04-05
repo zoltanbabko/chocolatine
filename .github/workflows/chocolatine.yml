@@ -58,8 +58,8 @@ jobs:
     name: Runs tests
     needs: check_program_compilation
     runs-on: ubuntu-latest
-    timeout-minutes: 2
     container: epitechcontent/epitest-docker:latest
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v3
       - id: run_tests
