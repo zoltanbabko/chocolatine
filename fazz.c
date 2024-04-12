@@ -12,7 +12,7 @@
 int start(char **argv)
 {
     int nb1 = atoi(argv[1]);
-    int nb2 = atoi(argv[2]);
+    int nb2 = atoi(argv[2]);         
 
     while (nb1 <= nb2) {
         if (nb1 % 10 == 0 && nb1 % 9 == 0)
